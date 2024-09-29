@@ -51,11 +51,11 @@ Simple viever of current game world objects inder root 'World'
 
 After installing mod new icon will appear in top right corner ...
 
-![top right icon](images/topRightIcon.png)
+![top right icon](Images/topRightIcon.png)
 
 and entry in railloader:
 
-![alt text](images/railloader.png)
+![alt text](Images/railloader.png)
 
 -   **Map editor** opens editor main window (same as clicking on icon in red circle)
 -   **Milestone manager** helper to advance / revert milestones
@@ -67,7 +67,7 @@ and entry in railloader:
 
 -   used to slecte game-graph to edit
 
-![editor](images/editor2.png)
+![editor](Images/editor2.png)
 
 note: if 'Graph' drop down is missing it means selected mod has only one game-graph.json file
 
@@ -75,13 +75,13 @@ note: if 'Graph' drop down is missing it means selected mod has only one game-gr
 
 -   is shown after game-graph is selected in
 
-![track node visualizer](images/trackNodeVisualizer.png)
+![track node visualizer](Images/trackNodeVisualizer.png)
 
 ### Node dialog
 
 Is opened by clicking on node visualizer.
 
-![track node editor](images/trackNodeEditor.png)
+![track node editor](Images/trackNodeEditor.png)
 
 -   Id, Position and Rotation are read-only
 -   you can now use keyboard to move / rotate node (see settings)
@@ -90,37 +90,37 @@ Is opened by clicking on node visualizer.
     -   without **shift** key: removes node and connected segments (top result)
     -   with **shift** key: additionaly connect other nodes to each other (bottom result)
 
-![track ndoe remove](images/trackNodeRemove.png)
+![track ndoe remove](Images/trackNodeRemove.png)
 
 -   **Create new** will create new node connected to current one
 
     -   this button is disabled for switches as game do not allow more than 3 segments from single node
     -   when end node is selected new node is placed into empty space after
 
-![alt text](images/trackNodeCreateEnd.png)
+![alt text](Images/trackNodeCreateEnd.png)
 
     -   when center node is selected new node is placed on the side
 
-![alt text](images/trackNodeCreateSide.png)
+![alt text](Images/trackNodeCreateSide.png)
 
 -   **Split** will create new node near current and connect one segment to it
     (note: node in red circle is original node)
 
-![alt text](images/trackNodeSplitSimple.png)
+![alt text](Images/trackNodeSplitSimple.png)
 
     -   in case of switch 2 new nodes are created
 
-![alt text](images/trackNodeSplitSwitch.png)
+![alt text](Images/trackNodeSplitSwitch.png)
 
 ## Segment visualiser
 
 is shown when node is sleected
 
-![alt text](images/trackSegmentVisualizer.png)
+![alt text](Images/trackSegmentVisualizer.png)
 
 ### Segment dialog
 
-![alt text](images/trackSegmentDialog.png)
+![alt text](Images/trackSegmentDialog.png)
 
 Is opened by clicking on segment visualizer chevron (in red circle).
 
@@ -133,11 +133,11 @@ note: for short segments there is only one chevron at segment center
 -   **Update properties** will generate single undo/redo operation to set all properties at once
 -   **Remove** will remove segment
 -   **Split** will place new node in middle ot segment
-    ![alt text](images/trackSegmentInjectNode.png)
+    ![alt text](Images/trackSegmentInjectNode.png)
 
 ### Telegraph pole dialog
 
-![alt text](images/telegraphPoleDialog.png)
+![alt text](Images/telegraphPoleDialog.png)
 
 -   can be opened by clicking on telegraph pole somewhere inside red circle
 -   Id, position and rotation are read-only
@@ -145,7 +145,7 @@ note: for short segments there is only one chevron at segment center
 -   note: yellow arrow is pointing to selected telegraph pole
 -   note: rotation is bit funky - rotate, then move
 
-![alt text](images/telegraphPole.png)
+![alt text](Images/telegraphPole.png)
 
 ## Project Setup
 
