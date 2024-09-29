@@ -29,21 +29,19 @@ public sealed class TelegraphPoleDialog(IUIHelper uiHelper) : DialogBase(uiHelpe
     protected override string          WindowTitle    => "Map Editor | Telegraph Pole";
 
     protected override void OnWindowClosed() {
-        base.OnWindowClosed();
-        MapEditorPlugin.UpdateState(state => state with { SelectedAsset = null });
+        MapEditorPlugin.UpdateState(state => state.TelegraphPole != null, state => state with { SelectedAsset = null });
     }
 
     protected override void BuildWindow(UIPanelBuilder builder) {
         builder.RebuildOnEvent<MapEditorStateChanged>();
         builder.RebuildOnEvent<MapEditorTransformChanged>();
 
-        var node = MapEditorPlugin.State.TelegraphPole!;
-        var pole = TelegraphPoleUtility.GetTelegraphPole(node.Id);
+        var nodeId = MapEditorPlugin.State.TelegraphPole!;
+        var pole = TelegraphPoleUtility.GetTelegraphPole(nodeId.Id);
 
-        builder.AddField("Id", builder.AddInputField($"{node}", _ => { })!);
+        builder.AddField("Id", builder.AddInputField($"{nodeId.Id}", _ => { })!);
         builder.AddField("Position", builder.AddInputField(pole.transform.localPosition.ToString(), _ => { })!);
         builder.AddField("Rotation", builder.AddInputField(pole.transform.localEulerAngles.ToString(), _ => { })!);
-        builder.AddField("Tag", builder.AddInputFieldNumber(0, _ => { }));
 
         builder.AddField("Transform mode",
             builder.ButtonStrip(strip => {

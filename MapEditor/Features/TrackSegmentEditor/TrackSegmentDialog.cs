@@ -34,7 +34,7 @@ public sealed class TrackSegmentDialog(IUIHelper uiHelper, TrackSegment trackSeg
     protected override string   WindowTitle    => $"Map Editor | Segment '{MapEditorPlugin.State.TrackSegment!.id}'";
 
     protected override void OnWindowClosed() {
-        MapEditorPlugin.UpdateState(state => state with { SelectedAsset = null });
+        MapEditorPlugin.UpdateState(state => state.TrackSegment != null, state => state with { SelectedAsset = null });
     }
 
     private string?                           _GroupId;
@@ -72,8 +72,8 @@ public sealed class TrackSegmentDialog(IUIHelper uiHelper, TrackSegment trackSeg
         builder.AddSection("Operations", section => {
             section.ButtonStrip(strip => {
                 strip.AddButton("Update properties", TrackSegmentUtility.UpdateSegment(_GroupId, _Priority, _SpeedLimit, _TrackClass, _Style, _TrestleHead, _TrestleTail));
-                strip.AddButton("Remove", TrackSegmentUtility.Remove());
-                strip.AddButton("Inject Node", TrackSegmentUtility.InjectNode());
+                strip.AddButton("Remove", TrackSegmentUtility.Remove);
+                strip.AddButton("Inject Node", TrackSegmentUtility.InjectNode);
             });
         });
 

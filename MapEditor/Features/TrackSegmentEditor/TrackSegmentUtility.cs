@@ -15,40 +15,37 @@ namespace MapEditor.Features.TrackSegmentEditor;
 
 internal static class TrackSegmentUtility
 {
-    public static Action InjectNode() {
+    public static void InjectNode() {
         // inject node in center of segment:
         // NODE_A  --- NODE_B
         // result:
         // NODE_A  --- NEW_NODE --- NODE_B
-        return () => {
-            var trackSegment = MapEditorPlugin.State.TrackSegment!;
+        var trackSegment = MapEditorPlugin.State.TrackSegment!;
 
-            var nodeA = trackSegment.a.id;
-            var nodeB = trackSegment.b.id;
+        var nodeA = trackSegment.a.id;
+        var nodeB = trackSegment.b.id;
 
-            var position    = trackSegment.Curve.GetPoint(0.5f).GameToWorld();
-            var eulerAngles = trackSegment.Curve.GetRotation(0.5f).eulerAngles;
+        var position    = trackSegment.Curve.GetPoint(0.5f).GameToWorld();
+        var eulerAngles = trackSegment.Curve.GetRotation(0.5f).eulerAngles;
 
-            MapEditorPlugin.UpdateState(state => state with { SelectedAsset = null });
+        MapEditorPlugin.UpdateState(state => state with { SelectedAsset = null });
 
-            var nid  = IdGenerators.TrackNodes.Next();
-            var sid1 = IdGenerators.TrackSegments.Next();
-            var sid2 = IdGenerators.TrackSegments.Next();
+        var nid  = IdGenerators.TrackNodes.Next();
+        var sid = IdGenerators.TrackSegments.Next();
 
-            var actions = new List<IStateStep> {
-                new TrackSegmentDestroy(trackSegment.id),
-                new TrackNodeCreate(nid, new TrackNodeData(position, eulerAngles)),
-                new TrackSegmentCreate(sid1, new TrackSegmentData(trackSegment) { StartId = nodeA, EndId = nid }),
-                new TrackSegmentCreate(sid2, new TrackSegmentData(trackSegment) { StartId = nid, EndId = nodeB })
-            };
-
-            MapEditorStateStepManager.NextStep(new CompoundSteps(actions.ToArray()));
-            UnityHelpers.CallOnNextFrame(() => {
-                MapEditorPlugin.UpdateState(state => state with {
-                    SelectedAsset = Graph.Shared.GetNode(nid)
-                });
-            });
+        var actions = new List<IStateStep> {
+            new TrackNodeCreate(nid, new TrackNodeData(position, eulerAngles)),
+            new TrackSegmentUpdate(trackSegment.id) { A = nodeA, B = nid },
+            new TrackSegmentCreate(sid, new TrackSegmentData(trackSegment) { StartId = nid, EndId = nodeB })
         };
+
+        MapEditorStateStepManager.NextStep(new CompoundSteps(actions.ToArray()));
+        UnityHelpers.CallOnNextFrame(() => {
+            MapEditorPlugin.UpdateState(state => state with {
+                SelectedAsset = Graph.Shared.GetNode(nid)
+            });
+        });
+        
     }
 
     public static TrackSegmentData Destroy(TrackSegment trackSegment) {
@@ -121,11 +118,9 @@ internal static class TrackSegmentUtility
         };
     }
 
-    public static Action Remove() {
-        return () => {
-            var trackSegment = MapEditorPlugin.State.TrackSegment!;
-            MapEditorPlugin.UpdateState(state => state with { SelectedAsset = null });
-            MapEditorStateStepManager.NextStep(new TrackSegmentDestroy(trackSegment.id));
-        };
+    public static void Remove() {
+        var trackSegment = MapEditorPlugin.State.TrackSegment!;
+        MapEditorPlugin.UpdateState(state => state with { SelectedAsset = null });
+        MapEditorStateStepManager.NextStep(new TrackSegmentDestroy(trackSegment.id));
     }
 }

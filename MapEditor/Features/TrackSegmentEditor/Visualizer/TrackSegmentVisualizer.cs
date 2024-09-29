@@ -1,6 +1,7 @@
 using System.Text;
 using Helpers;
 using JetBrains.Annotations;
+using Serilog;
 using Track;
 using UnityEngine;
 
@@ -168,6 +169,7 @@ public sealed class TrackSegmentVisualizer : MonoBehaviour, IPickable
     #region IPickable
 
     public void Activate(PickableActivateEvent evt) {
+        Log.Information("SelectedAsset = " + _TrackSegment);
         MapEditorPlugin.UpdateState(state => state with { SelectedAsset = _TrackSegment });
     }
 

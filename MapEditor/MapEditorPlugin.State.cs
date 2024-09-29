@@ -1,5 +1,6 @@
 ﻿using System;
 using GalaSoft.MvvmLight.Messaging;
+using Helpers;
 using MapEditor.Events;
 using MapEditor.Features.SceneryAssetEditor;
 using MapEditor.Features.TelegraphPoleEditor;
@@ -8,8 +9,10 @@ using MapEditor.Features.TrackNodeEditor.Visualizer;
 using MapEditor.Features.TrackSegmentEditor;
 using MapEditor.Features.TrackSegmentEditor.Visualizer;
 using MapEditor.Utility;
+using Serilog;
 using StrangeCustoms.Tracks;
-using TriangleNet.Logging;
+using TelegraphPoles;
+using Track;
 
 namespace MapEditor;
 
@@ -40,7 +43,8 @@ public sealed partial class MapEditorPlugin
 
     private void OnMapEditorStateChanged(MapEditorState oldState) {
 #if DEBUG
-        global::UI.Console.Console.shared.AddLine($"State: {State}");
+        UI.Console.Console.shared.AddLine($"State: {State}");
+        Log.Information($"State: {State}");
 #endif
         if (oldState.SelectedPatch != State.SelectedPatch) {
             if (State.SelectedPatch != null) {
@@ -52,30 +56,50 @@ public sealed partial class MapEditorPlugin
             }
         }
 
-        if (State.TrackNode != null) {
-            TrackNodeDialog.Show(_UiHelper, State.TrackNode);
-            TrackSegmentVisualizerManager.CreateVisualizersForNode(State.TrackNode);
-        } else {
-            TrackNodeDialog.Close();
-            TrackSegmentVisualizerManager.DestroyVisualizers();
+        if (oldState.SelectedAsset != State.SelectedAsset) {
+            OnMapEditorStateSelectedAssetChanged(oldState.SelectedAsset, State.SelectedAsset);
+        }
+    }
+
+    private void OnMapEditorStateSelectedAssetChanged(object? oldSelectedAsset, object? newSelectedAsset) {
+        switch (oldSelectedAsset) {
+            case TrackNode:
+                TrackNodeDialog.Close();
+                TrackSegmentVisualizerManager.DestroyVisualizers();
+                break;
+
+            case TrackSegment:
+                TrackSegmentDialog.Close();
+                TrackSegmentVisualizerManager.DestroyVisualizers();
+                break;
+
+            case TelegraphPoleId:
+                TelegraphPoleDialog.Close();
+                break;
+
+            case SceneryAssetInstance:
+                SceneryAssetDialog.Close();
+                break;
         }
 
-        if (State.TrackSegment != null) {
-            TrackSegmentDialog.Show(_UiHelper, State.TrackSegment);
-        } else {
-            TrackSegmentDialog.Close();
-        }
+        switch (newSelectedAsset) {
+            case TrackNode trackNode:
+                TrackNodeDialog.Show(_UiHelper, trackNode);
+                TrackSegmentVisualizerManager.CreateVisualizersForNode(trackNode);
+                break;
 
-        if (State.TelegraphPole != null) {
-            TelegraphPoleDialog.Show(_UiHelper);
-        } else {
-            TelegraphPoleDialog.Close();
-        }
+            case TrackSegment trackSegment:
+                TrackSegmentDialog.Show(_UiHelper, trackSegment);
+                TrackSegmentVisualizerManager.CreateTrackSegmentVisualizer(trackSegment);
+                break;
 
-        if (State.SceneryAssetInstance != null) {
-            SceneryAssetDialog.Show(_UiHelper);
-        } else {
-            SceneryAssetDialog.Close();
+            case TelegraphPoleId:
+                TelegraphPoleDialog.Show(_UiHelper);
+                break;
+
+            case SceneryAssetInstance:
+                SceneryAssetDialog.Show(_UiHelper);
+                break;
         }
     }
 }

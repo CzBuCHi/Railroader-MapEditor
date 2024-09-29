@@ -24,12 +24,11 @@ public abstract class DialogBase(IUIHelper uiHelper)
 
     protected static void Close<TDialogBase>(ref TDialogBase? instance)
         where TDialogBase : DialogBase {
-        if (instance == null) {
+        if (instance == null ||  instance._Window == null) {
             return;
         }
 
-        instance.Window.CloseWindow();
-        Object.Destroy(instance.Window.gameObject);
+        instance._Window.CloseWindow();
         instance = null;
     }
 

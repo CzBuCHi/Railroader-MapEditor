@@ -29,8 +29,7 @@ public sealed class SceneryAssetDialog(IUIHelper uiHelper) : DialogBase(uiHelper
     protected override string          WindowTitle    => "Map Editor | Scenery asset";
 
     protected override void OnWindowClosed() {
-        base.OnWindowClosed();
-        MapEditorPlugin.UpdateState(state => state with { SelectedAsset = null });
+        MapEditorPlugin.UpdateState(state => state.SceneryAssetInstance != null, state => state with { SelectedAsset = null });
     }
 
     protected override void BuildWindow(UIPanelBuilder builder) {

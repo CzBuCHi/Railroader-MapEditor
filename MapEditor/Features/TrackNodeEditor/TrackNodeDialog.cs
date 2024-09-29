@@ -36,7 +36,7 @@ public sealed class TrackNodeDialog(IUIHelper uiHelper, TrackNode trackNode) : D
     protected override string   WindowTitle    => $"Map Editor | Node: '{_TrackNode!.id}'";
 
     protected override void OnWindowClosed() {
-        MapEditorPlugin.UpdateState(state => state with { SelectedAsset = null });
+        MapEditorPlugin.UpdateState(state => state.TrackNode != null, state => state with { SelectedAsset = null });
     }
 
     protected override void BuildWindow(UIPanelBuilder builder) {
@@ -62,8 +62,8 @@ public sealed class TrackNodeDialog(IUIHelper uiHelper, TrackNode trackNode) : D
         builder.AddSection("Operations", section => {
             section.ButtonStrip(strip => {
                 strip.AddButton("Show", TrackNodeUtility.Show);
-                strip.AddButton("Remove", TrackNodeUtility.Remove(Input.GetKey(KeyCode.LeftShift)));
-                strip.AddButton("Create new", TrackNodeUtility.Add(Input.GetKey(KeyCode.LeftShift))).Disable(Graph.Shared.IsSwitch(_TrackNode));
+                strip.AddButton("Remove", TrackNodeUtility.Remove);
+                strip.AddButton("Create new", TrackNodeUtility.Add).Disable(Graph.Shared.IsSwitch(_TrackNode));
                 strip.AddButton("Split", TrackNodeUtility.Split).Disable(Graph.Shared.NodeIsDeadEnd(_TrackNode, out _));
             });
         });
