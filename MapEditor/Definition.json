@@ -1,0 +1,9 @@
+{
+    "manifestVersion": 1,
+    "id": "MapEditor",
+    "name": "Map Editor",
+    "version": "$(AssemblyVersion)",
+    "assemblies": [
+        "MapEditor"
+    ]
+}
