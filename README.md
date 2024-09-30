@@ -9,8 +9,8 @@
 
 ## Installation
 
--   Download `MapEditor-VERSION.zip` from the releases page
--   Download `MapMod-VERSION.zip` from the releases page
+-   Download `CzBuCHi.MapEditor_VERSION.zip` from the [releases page](https://github.com/CzBuCHi/Railroader-MapEditor/releases)
+-   Download `CzBuCHi.MapMod_VERSION.zip` from the [releases page](https://github.com/CzBuCHi/Railroader-MapEditor/releases)
 -   Install with [Railloader](<[https://www.nexusmods.com/site/mods/21](https://railroader.stelltis.ch/)>)
 -   **MapMod** is required for telegraph pole modifications - can be used without editor
 
