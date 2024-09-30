@@ -10,8 +10,9 @@
 ## Installation
 
 -   Download `MapEditor-VERSION.zip` from the releases page
+-   Download `MapMod-VERSION.zip` from the releases page
 -   Install with [Railloader](<[https://www.nexusmods.com/site/mods/21](https://railroader.stelltis.ch/)>)
--   **MapMod** is required for telegraph pole modifications (when editor is not installed)
+-   **MapMod** is required for telegraph pole modifications - can be used without editor
 
 ## Usage
 

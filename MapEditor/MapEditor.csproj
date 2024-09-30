@@ -6,6 +6,7 @@
     <IsMod>true</IsMod>
     <PackageMod>enable</PackageMod>
     <Nullable>enable</Nullable>
+    <AssemblyName>CzBuCHi.$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="*.json" CopyToOutputDirectory="Always" />
@@ -40,8 +41,5 @@
     <Folder Include="Features\Milestones\" />
     <Folder Include="Features\SceneryAssetEditor\StateSteps\" />
     <Folder Include="Features\TrackSegmentEditor\Visualizer\" />
-  </ItemGroup>  
-  <ItemGroup>
-    <ProjectReference Include="..\MapMod\MapMod.csproj" />
   </ItemGroup>
 </Project>

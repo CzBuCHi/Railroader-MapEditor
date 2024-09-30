@@ -6,6 +6,7 @@
     <IsMod>true</IsMod>
     <PackageMod>enable</PackageMod>
     <Nullable>enable</Nullable>
+    <AssemblyName>CzBuCHi.$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="*.json" CopyToOutputDirectory="Always" />

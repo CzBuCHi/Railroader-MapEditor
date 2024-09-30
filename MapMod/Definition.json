@@ -4,6 +4,6 @@
     "name": "Map Mod",
     "version": "$(AssemblyVersion)",
     "assemblies": [
-        "MapMod"
+        "CzBuCHi.MapMod"
     ]
 }
