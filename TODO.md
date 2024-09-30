@@ -36,3 +36,7 @@ span dialog
     - lover, upper segment, distance
 
     
+track node editor closed => State.SelectedAsset not set to null
+
+
+track node remove with shift:  do not delete segment - connect it to other node

@@ -157,13 +157,7 @@ public sealed class SceneViewDialog(IUIHelper uiHelper) : DialogBase(uiHelper)
     }
 
     private static void BuildSectionForGraph(UIPanelBuilder builder, Graph graph) {
-        builder.AddField("", builder.AddLabel(
-                """
-                Graph contains all track nodes, segments, spans, etc.
-                I don't see any point of showing that in here, so i skipped it ...
-                (also only masochist would like to look for something in dropdown with 7000+ entries)
-                """).Height(60)
-        );
+        builder.AddField("", builder.AddLabel("Graph contains all track nodes, segments, spans, etc."));
     }
 
     #endregion

@@ -69,9 +69,9 @@ public sealed class MilestonesDialog(IUIHelper uiHelper) : DialogBase(uiHelper)
             var length = section.deliveryPhases!.Length;
             builder.AddTitle(section.displayName!, $"{section.FulfilledCount}/{length} Phases Complete");
             builder.AddLabel(section.description!);
-            builder.AddButton("Advance", () => Progression.Shared!.Advance(section));
+            builder.AddButton("Advance", () => Advance(section));
             if (length > 1) {
-                builder.AddButton("Advance all phases", () => Advance(section));
+                builder.AddButton("Advance one phase", () => Progression.Shared!.Advance(section));
             }
         } else if (section.Unlocked) {
             builder.AddTitle(section.displayName!, "Completed!");

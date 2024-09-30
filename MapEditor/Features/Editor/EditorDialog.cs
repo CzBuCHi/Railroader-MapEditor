@@ -7,6 +7,7 @@ using MapEditor.Features.Abstract;
 using MapEditor.Features.Editor.Harmony;
 using MapEditor.Utility;
 using Railloader;
+using Serilog;
 using Track;
 using UI.Builder;
 using UI.Common;
@@ -58,18 +59,18 @@ public sealed class EditorDialog(IModdingContext context, IUIHelper uiHelper) : 
     private int _ModIndex;
     private int _GraphIndex;
 
+    private List<string> GetModGraphs() => _Graphs[Mods[_ModIndex]]!;
+
     protected override void BuildWindow(UIPanelBuilder builder) {
         builder
             .AddField("Mod",
                 builder.AddDropdown(Mods, _ModIndex, o => {
+                    Log.Information("Mod changed: " + o);
                     _ModIndex = o;
                     _GraphIndex = 0;
                     MapEditorStateStepManager.UndoAll();
                     MapEditorStateStepManager.Clear();
-                    if (_ModIndex == 0) {
-                        UpdateState(null);
-                    }
-
+                    UpdateState(_ModIndex == 0 ? null : GetModGraphs()[0]);
                     builder.Rebuild();
                 })!
             )!
@@ -80,23 +81,23 @@ public sealed class EditorDialog(IModdingContext context, IUIHelper uiHelper) : 
             return;
         }
 
-        var modGraphs = _Graphs[Mods[_ModIndex]]!;
+        var modGraphs = GetModGraphs();
         if (modGraphs.Count > 1) {
             builder
                 .AddField("Graph",
                     builder.AddDropdown(modGraphs.Select(Path.GetFileNameWithoutExtension).ToList(), _GraphIndex, o => {
+                        Log.Information("Graph changed: " + o);
                         _GraphIndex = o;
                         MapEditorStateStepManager.UndoAll();
                         MapEditorStateStepManager.Clear();
                         UpdateState(modGraphs[_GraphIndex]);
-                    })!
-                )!
+                        builder.Rebuild();
+                    })
+                )
                 .Disable(MapEditorStateStepManager.Count > 0);
-        } else {
-            _GraphIndex = 0;
-            UpdateState(modGraphs[_GraphIndex]);
         }
 
+        Log.Information("SelectedPatch: " + MapEditorPlugin.State.SelectedPatch);
         if (MapEditorPlugin.State.SelectedPatch != null) {
             builder.AddSection("", BuildEditor);
         }
@@ -127,9 +128,9 @@ public sealed class EditorDialog(IModdingContext context, IUIHelper uiHelper) : 
             strip.AddButton("Redo All", MapEditorStateStepManager.RedoAll).Disable(!MapEditorStateStepManager.CanRedo);
         });
 
-        builder.AddField("Show spans",
-            builder.AddToggle(() => MapEditorPlugin.State.ShowSpans, o => MapEditorPlugin.UpdateState(state => state with { ShowSpans = o }))!
-        );
+        //builder.AddField("Show spans",
+        //    builder.AddToggle(() => MapEditorPlugin.State.ShowSpans, o => MapEditorPlugin.UpdateState(state => state with { ShowSpans = o }))!
+        //);
 
         builder.ButtonStrip(strip => {
             strip.AddButton("Rebuild Track", TrackObjectManager.Instance.Rebuild);

@@ -10,9 +10,9 @@ public sealed partial class MapEditorPlugin : IModTabHandler
 {
     public void ModTabDidOpen(UIPanelBuilder builder) {
         builder.AddButton("Map Editor", OpenEditorDialog);
-        builder.AddButton("Milestone manager", () => MilestonesDialog.Show(_UiHelper));
+        builder.AddButton("Milestone manager", () => MilestonesDialog.Show(_UiHelper));        
+        builder.AddButton("Scene viewer", () => SceneViewDialog.Show(_UiHelper));
         builder.AddButton("Settings", () => SettingsDialog.Show(_UiHelper));
-        builder.AddButton("Scene View", () => SceneViewDialog.Show(_UiHelper));
 #if DEBUG
         builder.AddButton("Testing", Testing.Execute);
 #endif

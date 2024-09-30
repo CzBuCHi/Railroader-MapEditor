@@ -1,6 +1,6 @@
 {
     "manifestVersion": 1,
-    "id": "MapEditor",
+    "id": "CzBuCHi.MapEditor",
     "name": "Map Editor",
     "version": "$(AssemblyVersion)",
     "assemblies": [
