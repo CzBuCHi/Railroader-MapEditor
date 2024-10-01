@@ -37,4 +37,9 @@ public sealed record AutoTrestleDestroy(string Id) : IStateStep
         MapEditorPlugin.PatchEditor!.AddOrUpdateAutoTrestle(segment, _ => _Data);
         AutoTrestleUtility.CreateTrestle(segment, _Data);
     }
+
+#if DEBUG
+    public string DoText   => $"AutoTrestleDestroy = {{ Id = {Id} }}";
+    public string UndoText => $"AutoTrestleCreate = {{ Id = {Id} }}";
+#endif
 }

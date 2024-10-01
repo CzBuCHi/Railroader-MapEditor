@@ -9,64 +9,73 @@ namespace MapEditor.Features.TelegraphPoleEditor.StateSteps;
 
 public sealed record TelegraphPoleUpdate(int Id) : IStateStep
 {
-    private Vector3? _LocalPosition;
-    private Vector3? _LocalEulerAngles;
+    private Vector3? _Position;
+    private Vector3? _EulerAngles;
 
-    public Vector3? LocalPosition { get; init; }
-    public Vector3? LocalEulerAngles { get; init; }
+    public Vector3? Position    { get; init; }
+    public Vector3? EulerAngles { get; init; }
 
-    private Node GetNode()
-    {
+    private Node GetNode() {
         var manager = Object.FindAnyObjectByType<TelegraphPoleManager>();
-        var graph = Traverse.Create(manager!).Field("_graph")!.GetValue<SimpleGraph.Runtime.SimpleGraph>();
+        var graph   = Traverse.Create(manager!).Field("_graph")!.GetValue<SimpleGraph.Runtime.SimpleGraph>();
         return graph.NodeForId(Id);
     }
 
-    public void Do()
-    {
-        if (LocalPosition == null && LocalEulerAngles == null)
-        {
+    public void Do() {
+        if (Position == null && EulerAngles == null) {
             return;
         }
 
         var node = GetNode();
-        if (LocalPosition != null)
-        {
-            global::UI.Console.Console.shared.AddLine($"Do LocalPosition: {LocalPosition}");
-            _LocalPosition = node.position.Clone();
-            node.position = LocalPosition.Value.Clone();
+        if (Position != null) {
+            _Position = node.position.Clone();
+            node.position = Position.Value.Clone();
         }
 
-        if (LocalEulerAngles != null)
-        {
-            global::UI.Console.Console.shared.AddLine($"Do LocalEulerAngles: {LocalEulerAngles}");
-            _LocalEulerAngles = node.eulerAngles.Clone();
-            node.eulerAngles = LocalEulerAngles.Value.Clone();
+        if (EulerAngles != null) {
+            _EulerAngles = node.eulerAngles.Clone();
+            node.eulerAngles = EulerAngles.Value.Clone();
         }
 
         MapEditorPlugin.PatchEditor!.AddOrUpdateTelegraphPole(Id, node.position, node.eulerAngles, node.tag);
     }
 
-    public void Undo()
-    {
-        if (_LocalPosition == null && _LocalEulerAngles == null)
-        {
+    public void Undo() {
+        if (_Position == null && _EulerAngles == null) {
             return;
         }
 
         var node = GetNode();
-        if (_LocalPosition != null)
-        {
-            global::UI.Console.Console.shared.AddLine($"Undo LocalPosition: {_LocalPosition}");
-            node.position = _LocalPosition.Value;
+        if (_Position != null) {
+            node.position = _Position.Value;
         }
 
-        if (_LocalEulerAngles != null)
-        {
-            global::UI.Console.Console.shared.AddLine($"Undo LocalEulerAngles: {_LocalEulerAngles}");
-            node.eulerAngles = _LocalEulerAngles.Value;
+        if (_EulerAngles != null) {
+            node.eulerAngles = _EulerAngles.Value;
         }
 
         MapEditorPlugin.PatchEditor!.RemoveTelegraphPole(Id);
     }
+
+#if DEBUG
+    public string DoText {
+        get {
+            var node = GetNode();
+            return "TelegraphPoleUpdate { " +
+                   (Position != null ? $"Position = {node.position} -> {Position}, " : "") +
+                   (EulerAngles != null ? $"{nameof(EulerAngles)} = " + node.eulerAngles + " -> " + EulerAngles + ", " : "") +
+                   " }";
+        }
+    }
+
+    public string UndoText {
+        get {
+            var node = GetNode();
+            return "TelegraphPoleUpdate { " +
+                   (Position != null ? $"Position = {node.position} -> {Position}, " : "") +
+                   (EulerAngles != null ? $"EulerAngles = {node.eulerAngles} -> {EulerAngles}, " : "") +
+                   " }";
+        }
+    }
+#endif
 }

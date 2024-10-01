@@ -69,4 +69,29 @@ public sealed record TrackNodeUpdate(string Id) : IStateStep
         Graph.Shared.OnNodeDidChange(node);
         MapEditorPlugin.PatchEditor!.AddOrUpdateNode(node);
     }
+
+#if DEBUG
+    public string DoText {
+        get {
+            var node = Graph.Shared.GetNode(Id)!;
+            return "TrackNodeUpdate { Id = " + Id + ", " +
+                   
+                   (LocalPosition != null ? $"LocalPosition = {node.transform.localPosition} -> {LocalPosition}, " : "") +
+                   (LocalEulerAngles != null ? $"LocalEulerAngles = {node.transform.eulerAngles} -> {LocalEulerAngles}, " : "") +
+                   (FlipSwitchStand != null ? $"FlipSwitchStand = {node.flipSwitchStand} -> {FlipSwitchStand}, " : "") +
+                   " }";
+        }
+    }
+
+    public string UndoText {
+        get {
+            var node = Graph.Shared.GetNode(Id)!;
+            return "TrackNodeUpdate { Id = " + Id + ", " +
+                   (_LocalPosition != null ? $"LocalPosition = {node.transform.localPosition} -> {_LocalPosition}, " : "") +
+                   (_LocalEulerAngles != null ? $"LocalEulerAngles = {node.transform.eulerAngles} -> {_LocalEulerAngles}, " : "") +
+                   (_FlipSwitchStand != null ? $"FlipSwitchStand = {node.flipSwitchStand} -> {_FlipSwitchStand}, " : "") +
+                   " }";
+        }
+    }
+#endif
 }

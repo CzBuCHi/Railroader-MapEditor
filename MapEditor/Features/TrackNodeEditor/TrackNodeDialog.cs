@@ -3,10 +3,10 @@ using MapEditor.Features.Abstract;
 using MapEditor.Features.TrackNodeEditor.StateSteps;
 using MapEditor.Utility;
 using Railloader;
+using Serilog;
 using Track;
 using UI.Builder;
 using UI.Common;
-using UnityEngine;
 
 namespace MapEditor.Features.TrackNodeEditor;
 
@@ -33,24 +33,29 @@ public sealed class TrackNodeDialog(IUIHelper uiHelper, TrackNode trackNode) : D
     protected override int      WindowWidth    => 400;
     protected override int      WindowHeight   => 300;
     protected override Position WindowPosition => Position.LowerRight;
-    protected override string   WindowTitle    => $"Map Editor | Node: '{_TrackNode!.id}'";
+    protected override string   WindowTitle    => $"Map Editor | Node: '{_TrackNode.id}'";
 
     protected override void OnWindowClosed() {
-        MapEditorPlugin.UpdateState(state => state.TrackNode != null, state => state with { SelectedAsset = null });
+        MapEditorPlugin.UpdateState(state => state.TrackNode == _TrackNode, state => state with { SelectedAsset = null });
     }
 
     protected override void BuildWindow(UIPanelBuilder builder) {
+        if (MapEditorPlugin.State.TrackNode == null || 
+            MapEditorPlugin.State.TrackNode.id != _TrackNode.id) {
+            return;
+        }
+
         builder.RebuildOnEvent<MapEditorStateChanged>();
 
-        builder.AddField("Id", builder.AddInputField(_TrackNode.id, _ => { })!)!.Disable(true);
-        builder.AddField("Position", builder.AddInputField(_TrackNode.transform.localPosition.ToString(), _ => { })!)!.Disable(true);
-        builder.AddField("Rotation", builder.AddInputField(_TrackNode.transform.localEulerAngles.ToString(), _ => { })!)!.Disable(true);
+        builder.AddField("Id", builder.AddInputField(_TrackNode.id, _ => { })).Disable(true);
+        builder.AddField("Position", builder.AddInputField(_TrackNode.transform.localPosition.ToString(), _ => { })).Disable(true);
+        builder.AddField("Rotation", builder.AddInputField(_TrackNode.transform.localEulerAngles.ToString(), _ => { })).Disable(true);
 
         builder.AddField("Transform mode",
             builder.ButtonStrip(strip => {
                 strip.AddButtonSelectable("Move", MapEditorPlugin.State.TransformMode == TransformMode.Move, () => MapEditorPlugin.UpdateState(o => o with { TransformMode = TransformMode.Move }));
                 strip.AddButtonSelectable("Rotate", MapEditorPlugin.State.TransformMode == TransformMode.Rotate, () => MapEditorPlugin.UpdateState(o => o with { TransformMode = TransformMode.Rotate }));
-            })!
+            })
         );
 
         if (Graph.Shared.IsSwitch(_TrackNode)) {

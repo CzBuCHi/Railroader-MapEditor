@@ -28,4 +28,9 @@ public sealed record AutoTrestleCreate(string Id, AutoTrestleData Data) : IState
 
         MapEditorPlugin.PatchEditor!.RemoveAutoTrestle(segment);
     }
+
+#if DEBUG
+    public string DoText   => $"AutoTrestleCreate = {{ Id = {Id} }}";
+    public string UndoText => $"AutoTrestleDestroy = {{ Id = {Id} }}";
+#endif
 }

@@ -40,13 +40,13 @@ public sealed class TelegraphPoleTransformer : IKeyboardTransformer
         if (IsMoveTransform)
         {
             var delta = telegraphPole.transform.localPosition - _Initial;
-            step = new TelegraphPoleUpdate(NodeId) { LocalPosition = node.position + delta };
+            step = new TelegraphPoleUpdate(NodeId) { Position = node.position + delta };
             telegraphPole.transform.localPosition = _Initial;
         }
         else
         {
             var delta = telegraphPole.transform.localEulerAngles - _Initial;
-            step = new TelegraphPoleUpdate(NodeId) { LocalEulerAngles = node.eulerAngles + delta };
+            step = new TelegraphPoleUpdate(NodeId) { EulerAngles = node.eulerAngles + delta };
             telegraphPole.transform.localEulerAngles = _Initial;
         }
 

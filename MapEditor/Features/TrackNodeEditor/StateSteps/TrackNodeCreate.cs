@@ -22,4 +22,9 @@ public sealed record TrackNodeCreate(string Id, TrackNodeData Data) : IStateStep
         MapEditorPlugin.UpdateState(state => state.TrackNode == trackNode, state => state with { SelectedAsset = null });
         TrackNodeUtility.Destroy(trackNode);
     }
+
+#if DEBUG
+    public string DoText   => $"TrackNodeCreate = {{ Id = {Id} }}";
+    public string UndoText => $"TrackNodeDestroy = {{ Id = {Id} }}";
+#endif
 }

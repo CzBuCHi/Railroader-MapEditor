@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Helpers;
 using MapEditor.Extensions;
 using MapEditor.Features.Abstract.StateSteps;
@@ -24,71 +22,92 @@ public static class TrackNodeUtility
     }
 
     public static void Remove() {
+        var connectSegments = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        var node            = MapEditorPlugin.State.TrackNode!;
+        Log.Information($"Remove node {node.id}; connectSegments = {connectSegments}");
+
+        MapEditorPlugin.UpdateState(state => state with { SelectedAsset = null });
+
+        var steps = Graph.Shared.DecodeSwitchAt(node, out var enter, out var segmentA, out var segmentB)
+            ? RemoveSwitch(connectSegments, node, enter!, segmentA!, segmentB!)
+            : RemoveSimple(connectSegments, node);
+
+        MapEditorStateStepManager.NextStep(new CompoundSteps(steps.ToArray()));
+        UnityHelpers.CallOnNextFrame(TrackObjectManager.Instance.Rebuild);
+    }
+
+    private static IEnumerable<IStateStep> RemoveSimple(bool connectSegments, TrackNode node) {
         // end track node remove:
         // NODE_A --- NODE
         // result:
         // NODE_A
 
         // simple track node remove:
-        // NODE_A --- NODE --- NODE_B
+        // NODE_A -1- NODE -2- NODE_B
         // result:
         // NODE_A     NODE_B
         // result (connectSegments):
-        // NODE_A --- NODE_B
+        // NODE_A -1- NODE_B
+        var segments = Graph.Shared.SegmentsConnectedTo(node);
+        if (connectSegments) {
+            var firstSegment = segments.First();
+            var lastSegment  = segments.Last();
 
+            var a = firstSegment.GetOtherNode(node)!.id;
+            var b = lastSegment.GetOtherNode(node)!.id;
+            if (firstSegment.a.id == a) {
+                yield return new TrackSegmentUpdate(firstSegment.id) { B = b };
+            } else {
+                yield return new TrackSegmentUpdate(firstSegment.id) { A = b };
+            }
+
+            yield return new TrackSegmentDestroy(lastSegment.id);
+        } else {
+            foreach (var segment in segments) {
+                yield return new TrackSegmentDestroy(segment.id);
+            }
+        }
+
+        yield return new TrackNodeDestroy(node.id);
+    }
+
+    private static IEnumerable<IStateStep> RemoveSwitch(bool connectSegments, TrackNode node, TrackSegment segmentEnter, TrackSegment segmentA, TrackSegment segmentB) {
         // switch track node remove:
-        // NODE_A ---\
-        //            >- NODE --- NODE_C
-        // NODE_B ---/
+        // NODE_A -1-\
+        //            >- NODE -3- NODE_C
+        // NODE_B -2-/
         // result:
         // NODE_A
         //               NODE_C
         // NODE_B
         // result (connectSegments):
-        // NODE_A ---\
+        // NODE_A -1-\
         //            >- NODE_C
-        // NODE_B ---/
-        var connectSegments = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        // NODE_B -2-/
 
-        var node = MapEditorPlugin.State.TrackNode!;
-        Log.Information($"Remove node {node.id}; connectSegments = {connectSegments}");
-
-        TrackSegment? enter = null;
+        yield return new TrackSegmentDestroy(segmentEnter.id);
         if (connectSegments) {
-            Graph.Shared.DecodeSwitchAt(node, out enter, out _, out _);
-        }
+            var a     = segmentA.GetOtherNode(node)!.id;
+            var b     = segmentB.GetOtherNode(node)!.id;
+            var enter = segmentEnter.GetOtherNode(node)!.id;
 
-        var segments = Graph.Shared.SegmentsConnectedTo(node);
-        MapEditorPlugin.UpdateState(state => state with { SelectedAsset = null });
-
-        var actions = segments.Select(trackSegment => new TrackSegmentDestroy(trackSegment.id)).Cast<IStateStep>().ToList();
-        actions.Add(new TrackNodeDestroy(node.id));
-
-        if (connectSegments) {
-            if (segments.Count == 2) {
-                var firstSegment = segments.First();
-                actions.Add(new TrackSegmentCreate(IdGenerators.TrackSegments.Next(),
-                    new TrackSegmentData(firstSegment) {
-                        StartId = firstSegment.GetOtherNode(node)!.id,
-                        EndId = segments.Last().GetOtherNode(node)!.id
-                    })
-                );
-            } else if (enter != null) {
-                var switchNode = enter.GetOtherNode(node)!;
-                var createSegments = segments
-                                     .Where(o => o != enter)
-                                     .Select(branch => new TrackSegmentCreate(IdGenerators.TrackSegments.Next(),
-                                         new TrackSegmentData(enter) {
-                                             StartId = switchNode.id,
-                                             EndId = branch.GetOtherNode(node)!.id
-                                         })
-                                     );
-                actions.AddRange(createSegments);
+            if (segmentA.a.id == a) {
+                yield return new TrackSegmentUpdate(segmentA.id) { B = enter };
+            } else {
+                yield return new TrackSegmentUpdate(segmentA.id) { A = enter };
             }
+
+            if (segmentB.a.id == b) {
+                yield return new TrackSegmentUpdate(segmentB.id) { B = enter };
+            } else {
+                yield return new TrackSegmentUpdate(segmentB.id) { A = enter };
+            }
+        } else {
+            yield return new TrackSegmentDestroy(segmentA.id);
+            yield return new TrackSegmentDestroy(segmentB.id);
         }
 
-        MapEditorStateStepManager.NextStep(new CompoundSteps(actions.ToArray()));
-        UnityHelpers.CallOnNextFrame(TrackObjectManager.Instance.Rebuild);
+        yield return new TrackNodeDestroy(node.id);
     }
 
     public static void Add() {
@@ -162,7 +181,8 @@ public static class TrackNodeUtility
 
             var nid = IdGenerators.TrackNodes.Next();
 
-            var p     = trackSegment.GetParameter(5, node);
+            var par   = Math.Min(trackSegment.GetLength(), 5);
+            var p     = trackSegment.GetParameter(par, node);
             var point = trackSegment.Curve.GetPoint(p).GameToWorld();
 
             var forward = node.transform.forward * (isSwitch ? 2 : 5);
@@ -219,5 +239,22 @@ public static class TrackNodeUtility
         Graph.Shared.AddNode(trackNode);
         MapEditorPlugin.PatchEditor!.AddOrUpdateNode(trackNode);
         return trackNode;
+    }
+
+    public static void TryConnectToCurrent(TrackNode trackNode) {
+        var currentSegments = Graph.Shared.SegmentsConnectedTo(MapEditorPlugin.State.TrackNode!);
+        var segments        = Graph.Shared.SegmentsConnectedTo(trackNode);
+        if (segments.Count < 3 && currentSegments.Count < 3) {
+            var step = new TrackSegmentCreate(IdGenerators.TrackSegments.Next(),
+                new TrackSegmentData(currentSegments.First()) {
+                    StartId = MapEditorPlugin.State.TrackNode!.id,
+                    EndId = trackNode.id
+                });
+
+            MapEditorStateStepManager.NextStep(step);
+            UnityHelpers.CallOnNextFrame(TrackObjectManager.Instance.Rebuild);
+        }
+
+        MapEditorPlugin.UpdateState(state => state with { SelectedAsset = trackNode });
     }
 }

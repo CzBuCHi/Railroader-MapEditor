@@ -18,17 +18,26 @@ public sealed record CompoundSteps(params IStateStep[] Steps) : IStateStep
     }
 
 #if DEBUG
-    public override string ToString() {
-        var sb = new StringBuilder();
-        sb.Append("CompoundSteps [");
-        foreach (var step in Steps) {
-            sb.AppendLine();
-            sb.Append(step);
-        }
+    public string DoText {
+        get {
+            var sb = new StringBuilder().Append("CompoundSteps [");
+            foreach (var step in Steps) {
+                sb.AppendLine("  ").Append(step.DoText);
+            }
 
-        sb.AppendLine();
-        sb.Append(']');
-        return sb.ToString();
+            return sb.AppendLine().Append(']').ToString();
+        }
+    }
+
+    public string UndoText {
+        get {
+            var sb = new StringBuilder().Append("CompoundSteps [");
+            foreach (var step in Steps.Reverse()) {
+                sb.AppendLine("  ").Append(step.UndoText);
+            }
+
+            return sb.AppendLine().Append(']').ToString();
+        }
     }
 #endif
 }

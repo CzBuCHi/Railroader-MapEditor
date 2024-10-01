@@ -27,4 +27,9 @@ public sealed record TrackNodeDestroy(string Id) : IStateStep
         var node = TrackNodeUtility.Create(Id, _Data);
         UnityHelpers.CallOnNextFrame(() => TrackNodeVisualizerManager.CreateVisualizer(node));
     }
+
+#if DEBUG
+    public string DoText   => $"TrackNodeDestroy = {{ Id = {Id} }}";
+    public string UndoText => $"TrackNodeCreate = {{ Id = {Id} }}";
+#endif
 }

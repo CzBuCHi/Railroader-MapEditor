@@ -45,4 +45,18 @@ public class SceneryAssetUpdate(SceneryAssetInstance sceneryAssetInstance) : ISt
 
         sceneryAssetInstance.ReloadComponents();
     }
+
+#if DEBUG
+    public string DoText =>
+        "SceneryAssetUpdate { " +
+        (LocalPosition != null ? $"LocalPosition = {sceneryAssetInstance.transform.localPosition} -> {LocalPosition}, " : "") +
+        (LocalEulerAngles != null ? $"LocalEulerAngles = {sceneryAssetInstance.transform.localEulerAngles} -> {LocalEulerAngles}, " : "") +
+        " }";
+
+    public string UndoText =>
+        "SceneryAssetUpdate { " +
+        (_LocalPosition != null ? $"LocalPosition = {sceneryAssetInstance.transform.localPosition} -> {_LocalPosition}, " : "") +
+        (_LocalEulerAngles != null ? $"LocalEulerAngles = {sceneryAssetInstance.transform.localEulerAngles} -> {_LocalEulerAngles}, " : "") +
+        " }";
+#endif
 }

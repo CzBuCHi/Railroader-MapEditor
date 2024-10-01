@@ -1,5 +1,6 @@
 ﻿using System;
 using Railloader;
+using Serilog;
 using UI.Builder;
 using UI.Common;
 using Object = UnityEngine.Object;
@@ -12,30 +13,42 @@ public abstract class DialogBase(IUIHelper uiHelper)
 
     protected static void Show<TDialogBase>(ref TDialogBase? instance, Func<TDialogBase> createDialog, Action<TDialogBase>? updateDialog = null)
         where TDialogBase : DialogBase {
-        if (instance != null) {
-            updateDialog?.Invoke(instance);
-            instance.Window.OrderFront();
-            return;
-        }
 
-        instance = createDialog()!;
-        instance.Window.ShowWindow();
+        Log.Information("Dialog:Show [" + typeof(TDialogBase).Name + "]");
+        lock (_Lock) {
+            if (instance != null) {
+                Log.Information("instance != null");
+                updateDialog?.Invoke(instance);
+                instance.Window.ShowWindow();
+                instance.Window.OrderFront();
+                return;
+            }
+
+            instance = createDialog()!;
+            instance.Window.ShowWindow();
+        }
     }
 
     protected static void Close<TDialogBase>(ref TDialogBase? instance)
         where TDialogBase : DialogBase {
-        if (instance == null ||  instance._Window == null) {
-            return;
-        }
+        Log.Information("Dialog:Close [" + typeof(TDialogBase).Name + "]");
+        lock (_Lock) {
+            if (instance == null) {
+                return;
+            }
 
-        instance._Window.CloseWindow();
-        instance = null;
+            Log.Information("CloseWindow");
+            instance._Window!.CloseWindow();
+            Object.Destroy(instance._Window);
+            instance = null;
+        }
     }
 
     #endregion
 
-    private Window? _Window;
-    private Window  Window => _Window ??= CreateWindow();
+    private static readonly object  _Lock = new();
+    private                 Window? _Window;
+    private                 Window  Window => _Window ??= CreateWindow();
 
     private Window CreateWindow() {
         var window = uiHelper.CreateWindow(WindowWidth, WindowHeight, WindowPosition);
@@ -55,8 +68,6 @@ public abstract class DialogBase(IUIHelper uiHelper)
         }
 
         OnWindowClosed();
-        Object.Destroy(Window);
-        _Window = null;
     }
 
     protected virtual void OnWindowClosed() {

@@ -58,7 +58,12 @@ internal sealed class TrackNodeVisualizer : MonoBehaviour, IPickable
     #region IPickable
 
     public void Activate(PickableActivateEvent evt) {
-        MapEditorPlugin.UpdateState(state => state with { SelectedAsset = _TrackNode });
+        var connectToPrevious = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        if (connectToPrevious) {
+            TrackNodeUtility.TryConnectToCurrent(_TrackNode);
+        } else {
+            MapEditorPlugin.UpdateState(state => state with { SelectedAsset = _TrackNode });
+        }
     }
 
     public void Deactivate() {

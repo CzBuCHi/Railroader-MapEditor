@@ -35,4 +35,26 @@ public sealed record AutoTrestleUpdate(string Id) : IStateStep
         MapEditorPlugin.PatchEditor!.AddOrUpdateAutoTrestle(segment, AutoTrestleUtility.CreateOrUpdate(segment, _HeadStyle, _TailStyle));
         AutoTrestleUtility.UpdateTrestle(segment);
     }
+
+#if DEBUG
+    public string DoText {
+        get {
+            var autoTrestleData = MapEditorPlugin.PatchEditor!.GetAutoTrestle(Graph.Shared.GetSegment(Id)!)!;
+            return "AutoTrestleUpdate { " +
+                   (HeadStyle != null ? $"HeadStyle = {autoTrestleData.HeadStyle} -> {HeadStyle}, " : "") +
+                   (TailStyle != null ? $"TailStyle = {autoTrestleData.TailStyle} -> {TailStyle}, " : "") +
+                   " }";
+        }
+    }
+
+    public string UndoText {
+        get {
+            var autoTrestleData = MapEditorPlugin.PatchEditor!.GetAutoTrestle(Graph.Shared.GetSegment(Id)!)!;
+            return "AutoTrestleUpdate { " +
+                   (_HeadStyle != null ? $"HeadStyle = {autoTrestleData.HeadStyle} -> {_HeadStyle}, " : "") +
+                   (_TailStyle != null ? $"TailStyle = {autoTrestleData.TailStyle} -> {_TailStyle}, " : "") +
+                   " }";
+        }
+    }
+#endif
 }

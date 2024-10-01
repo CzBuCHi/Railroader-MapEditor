@@ -17,4 +17,9 @@ public sealed record TrackSegmentCreate(string Id, TrackSegmentData Data) : ISta
 
         TrackSegmentUtility.Destroy(segment);
     }
+
+#if DEBUG
+    public string DoText   => $"TrackSegmentCreate = {{ Id = {Id}, StartId = {Data.StartId}, EndId = {Data.EndId} }}";
+    public string UndoText => $"TrackSegmentDestroy = {{ Id = {Id}, StartId = {Data.StartId}, EndId = {Data.EndId}  }}";
+#endif
 }

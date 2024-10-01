@@ -118,4 +118,36 @@ public sealed record TrackSegmentUpdate(string Id) : IStateStep
 
         MapEditorPlugin.PatchEditor!.AddOrUpdateSegment(segment);
     }
+
+#if DEBUG
+    public string DoText {
+        get {
+            var segment = Graph.Shared.GetSegment(Id)!;
+            return $"TrackSegmentUpdate {{ Id = {Id}, " +
+                   (A != null ? $"A = {segment.a.id} -> {A}, " : "") +
+                   (B != null ? $"B = {segment.b.id} -> {B}, " : "") +
+                   (GroupId != null ? $"B = {segment.groupId} -> {GroupId}, " : "") +
+                   (Priority != null ? $"B = {segment.priority} -> {Priority}, " : "") +
+                   (SpeedLimit != null ? $"B = {segment.speedLimit} -> {SpeedLimit}, " : "") +
+                   (Style != null ? $"B = {segment.style} -> {Style}, " : "") +
+                   (TrackClass != null ? $"B = {segment.trackClass} -> {TrackClass}, " : "") +
+                   " }";
+        }
+    }
+
+    public string UndoText {
+        get {
+            var segment = Graph.Shared.GetSegment(Id)!;
+            return $"TrackSegmentUpdate {{ Id = {Id}, " +
+                   (_A != null ? $"A = {segment.a.id} -> {_A}, " : "") +
+                   (_B != null ? $"B = {segment.b.id} -> {_B}, " : "") +
+                   (_GroupId != null ? $"B = {segment.groupId} -> {_GroupId}, " : "") +
+                   (_Priority != null ? $"B = {segment.priority} -> {_Priority}, " : "") +
+                   (_SpeedLimit != null ? $"B = {segment.speedLimit} -> {_SpeedLimit}, " : "") +
+                   (_Style != null ? $"B = {segment.style} -> {_Style}, " : "") +
+                   (_TrackClass != null ? $"B = {segment.trackClass} -> {_TrackClass}, " : "") +
+                   " }";
+        }
+    }
+#endif
 }

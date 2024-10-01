@@ -14,7 +14,7 @@ public sealed record TrackSegmentDestroy(string Id) : IStateStep
         }
 
         MapEditorPlugin.UpdateState(state => state.TrackSegment == segment, state => state with { SelectedAsset = null });
-
+        
         _Data = TrackSegmentUtility.Destroy(segment);
     }
 
@@ -25,4 +25,14 @@ public sealed record TrackSegmentDestroy(string Id) : IStateStep
 
         TrackSegmentUtility.Create(Id, _Data);
     }
+
+#if DEBUG
+    public string DoText {
+        get {
+            var segment = Graph.Shared.GetSegment(Id)!;
+            return $"TrackSegmentDestroy = {{ Id = {Id}, StartId = {segment.a.id}, EndId = {segment.b.id}  }}"; }
+    }
+
+    public string UndoText => $"TrackSegmentCreate = {{ Id = {Id}, StartId = {_Data!.StartId}, EndId = {_Data.EndId} }}";
+#endif
 }

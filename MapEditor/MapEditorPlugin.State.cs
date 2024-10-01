@@ -38,7 +38,6 @@ public sealed partial class MapEditorPlugin
         var oldState = State;
         State = newState;
         UnityHelpers.CallOnNextFrame(() => Shared!.OnMapEditorStateChanged(oldState));
-        Messenger.Default.Send(new MapEditorStateChanged());
     }
 
     private void OnMapEditorStateChanged(MapEditorState oldState) {
@@ -59,9 +58,14 @@ public sealed partial class MapEditorPlugin
         if (oldState.SelectedAsset != State.SelectedAsset) {
             OnMapEditorStateSelectedAssetChanged(oldState.SelectedAsset, State.SelectedAsset);
         }
+
+        Messenger.Default.Send(new MapEditorStateChanged());
     }
 
     private void OnMapEditorStateSelectedAssetChanged(object? oldSelectedAsset, object? newSelectedAsset) {
+        Log.Information($"SelectedAsset: {Info(oldSelectedAsset)} => {Info(newSelectedAsset)}");
+        string Info(object? value) => value?.GetType().Name ?? "NULL";
+
         switch (oldSelectedAsset) {
             case TrackNode:
                 TrackNodeDialog.Close();
