@@ -54,6 +54,13 @@ public sealed class SceneryAssetDialog(IUIHelper uiHelper) : DialogBase(uiHelper
             })!
         );
 
+        builder.AddSection("Operations", section => {
+            section.ButtonStrip(strip => {
+                strip.AddButton("Show", SceneryAssetUtility.Show);
+                strip.AddButton("Remove", SceneryAssetUtility.Remove);
+            });
+        });
+
         builder.AddExpandingVerticalSpacer();
     }
 }

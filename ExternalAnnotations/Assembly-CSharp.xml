@@ -3,6 +3,9 @@
   <member name="F:CameraSelector.character">
     <attribute ctor="M:JetBrains.Annotations.NotNullAttribute.#ctor" />
   </member>
+  <member name="F:CameraSelector.strategyCamera">
+    <attribute ctor="M:JetBrains.Annotations.NotNullAttribute.#ctor" />
+  </member>
   <member name="F:Track.TrackNode.id">
     <attribute ctor="M:JetBrains.Annotations.NotNullAttribute.#ctor" />
   </member>

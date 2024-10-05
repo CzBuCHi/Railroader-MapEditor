@@ -5,6 +5,7 @@ using Helpers;
 using MapEditor.Events;
 using MapEditor.Features.Abstract;
 using MapEditor.Features.Editor.Harmony;
+using MapEditor.Features.SceneryAssetEditor;
 using MapEditor.Utility;
 using Railloader;
 using Serilog;
@@ -138,6 +139,11 @@ public sealed class EditorDialog(IModdingContext context, IUIHelper uiHelper) : 
                 MapEditorPlugin.PatchEditor!.Save();
                 MapEditorStateStepManager.Clear();
             });
+        });
+
+        builder.ButtonStrip(strip => {
+            strip.AddButton("Place building", SceneryAssetUtility.CreateNew);
+
         });
     }
 }

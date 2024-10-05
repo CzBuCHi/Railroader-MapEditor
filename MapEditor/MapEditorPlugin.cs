@@ -37,6 +37,7 @@ public sealed partial class MapEditorPlugin(IModdingContext context, IUIHelper u
     private void OnMapDidLoad(MapDidLoadEvent @event) {
         TopRightAreaExtension.AddButton(OpenEditorDialog);
         KeyboardTransform.Initialize();
+        UnityHelpers.Initialize();
     }
 
     private void OnMapDidUnload(MapDidUnloadEvent @event) {

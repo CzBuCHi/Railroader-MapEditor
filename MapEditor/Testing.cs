@@ -1,14 +1,9 @@
 ﻿#if DEBUG
 
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Helpers;
-using MapEditor.Features.SceneryAssetEditor;
-using Newtonsoft.Json;
 using SimpleGraph.Runtime;
 using Track;
-using UI.Builder;
 using UnityEngine;
 
 // ReSharper disable All
@@ -18,48 +13,25 @@ namespace MapEditor;
 public static class Testing
 {
     public static void Execute() {
-
-
-        var sai = UnityEngine.Object.FindObjectOfType<SceneryAssetInstance>();
-
-        var root = GetRoot(sai.transform);
-        var go   = root.gameObject;
-        var json = new JsonGameObject(go);
-
-        
-
-
-        //SceneryAssetUtility.CreateNew();
-        
-
-        File.WriteAllText(@"c:\projects\Railroader\Graph.json", JsonConvert.SerializeObject(json, Formatting.Indented));
-
-        Transform GetRoot(Transform transform) {
-            while(transform.parent != null) {
-                transform = transform.parent;
-            }
-
-            return transform;
-        }
     }
 }
 
 public class JsonGameObject(GameObject gameObject)
 {
-    public string           name        = gameObject.name;
-    public string           position    = gameObject.transform.localPosition.ToString();
+    public string name     = gameObject.name;
+    public string position = gameObject.transform.localPosition.ToString();
 
     public bool ShouldSerializeposition() {
         return gameObject.transform.localPosition != Vector3.zero;
     }
 
-    public string           eulerAngles = gameObject.transform.localEulerAngles.ToString();
+    public string eulerAngles = gameObject.transform.localEulerAngles.ToString();
 
     public bool ShouldSerializeeulerAngles() {
         return gameObject.transform.localEulerAngles != Vector3.zero;
     }
 
-    public string[]         components  = gameObject.GetComponents<Component>().Where(o => o is not Transform).Select(o => o.GetType().Name).ToArray();
+    public string[] components = gameObject.GetComponents<Component>().Where(o => o is not Transform).Select(o => o.GetType().Name).ToArray();
 
     public bool ShouldSerializecomponents() {
         return components.Length > 0;
@@ -81,8 +53,6 @@ public static class GameObjectEx
     }
 }
 
-
-
 public class JsonNode(Node node)
 {
     public int    id          = node.id;
@@ -91,7 +61,6 @@ public class JsonNode(Node node)
     public string scale       = node.scale.ToString();
     public int    tag         = node.tag;
 }
-
 
 public class JsonTrackNode(TrackNode trackNode)
 {

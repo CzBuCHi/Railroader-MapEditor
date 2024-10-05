@@ -1,4 +1,5 @@
 F:CameraSelector.character
+F:CameraSelector.strategyCamera
 F:Track.TrackNode.id
 F:Track.TrackSegment.a
 F:Track.TrackSegment.b
