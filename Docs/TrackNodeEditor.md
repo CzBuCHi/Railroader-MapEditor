@@ -19,6 +19,9 @@ To open this dialog you need to click on node visualizer:
 | Create new | create new node connected to current <br> disabled for switch node (game do not like more that 3 segments from single node) |
 | Split      | split current node into multiple nodes (2 or 3 for switch)                                                                  |
 
+note: To create segment between 2 existing nodes you need to select first node and then Shift+Click on second node.
+
+
 Visual example of how **Remove** works:
 
 -   top image is initial state (purple node is selected)
@@ -26,3 +29,4 @@ Visual example of how **Remove** works:
 -   bottom image is result with **Shift** key
 
 ![Remove](Images/trackNodeRemove.png)
+
