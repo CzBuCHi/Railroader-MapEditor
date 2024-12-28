@@ -2,11 +2,11 @@
 
 ![alt text](Images/sceneViewer.png)
 
-Simple viever of current game world objects inder root 'World'.
+Simple viever of current game world objects under root 'World'.
 
 **Show** button right of position will make 3rd persion camera to face that position
 
-Note to image: game objects **World** and **Large scenery** properties are hidden because **Whittier Engine Shed** ius selected to show them again you need to unselect **Whittier Engine Shed**.
+Note to image: game objects **World** and **Large scenery** properties are hidden because **Whittier Engine Shed** is selected; to show them again you need to unselect **Whittier Engine Shed**.
 
 Note: Not showing **Components** dropdown if there arent any
 

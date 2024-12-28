@@ -1,5 +1,10 @@
+pouze jedno okno pro cely editor? - zrusit node window, segment windoe, etc.
 
 
+zkusit posouvat node pomoci mysi - track segment render jako 2 lien + sleepers misto jetne line
+
+
+nejde zavrit node window
 
 separate segments from node dialog to segment dialog    OK
 
