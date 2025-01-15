@@ -12,7 +12,10 @@
     <Content Include="*.json" CopyToOutputDirectory="Always" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="TopRightArea\construction-icon.png" />
+    <Compile Remove="Features\**" />
+    <Content Remove="Features\**" />
+    <EmbeddedResource Remove="Features\**" />
+    <None Remove="Features\**" />
   </ItemGroup>  
   <ItemGroup>
     <Reference Include="System.Core" />
@@ -31,15 +34,9 @@
     <GameAssembly Include="Serilog" />   
     <GameAssembly Include="Newtonsoft.Json" />   
     <GameAssembly Include="StrangeCustoms" />
-    <GameAssembly Include="SimpleGraph.Runtime" />
-    
+    <GameAssembly Include="SimpleGraph.Runtime" />    
   </ItemGroup>  
   <ItemGroup>
-    <EmbeddedResource Include="TopRightArea\construction-icon.png" />
-  </ItemGroup>  
-  <ItemGroup>
-    <Folder Include="Features\Milestones\" />
-    <Folder Include="Features\SceneryAssetEditor\StateSteps\" />
-    <Folder Include="Features\TrackSegmentEditor\Visualizer\" />
+    <EmbeddedResource Include="TopRightArea\icon.png" />
   </ItemGroup>
 </Project>

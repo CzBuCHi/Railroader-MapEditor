@@ -12,16 +12,6 @@
     <Content Include="*.json" CopyToOutputDirectory="Always" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Features\**" />
-    <Compile Remove="TopRightArea\**" />
-    <Content Remove="Features\**" />
-    <Content Remove="TopRightArea\**" />
-    <EmbeddedResource Remove="Features\**" />
-    <EmbeddedResource Remove="TopRightArea\**" />
-    <None Remove="Features\**" />
-    <None Remove="TopRightArea\**" />
-  </ItemGroup>  
-  <ItemGroup>
     <Reference Include="System.Core" />
     <GameAssembly Include="Assembly-CSharp" />
     <GameAssembly Include="0Harmony" />

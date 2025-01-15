@@ -45,6 +45,9 @@ public static class IdGenerators
     private static IdGenerator? _TrainCrew;
     public static IdGenerator TrainCrew => _TrainCrew ??= _IdGeneratorFactory("T" + _Prefix, 3);
 
+    private static IdGenerator? _Scenery;
+    public static  IdGenerator  Scenery => _Scenery ??= _IdGeneratorFactory("SC" + _Prefix, 3);
+
     private delegate IdGenerator IdGeneratorFactoryDelegate(string prefix, int digits);
 
     private static IdGeneratorFactoryDelegate BuildIdGeneratorFactory()

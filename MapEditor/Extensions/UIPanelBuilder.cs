@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace MapEditor.Extensions;
 
-public static class UIPanelBuilderExtensions
+public static class UiPanelBuilderExtensions
 {
     #region AddEnumDropdown
 
@@ -37,9 +37,4 @@ public static class UIPanelBuilderExtensions
     }
 
     #endregion
-
-    public static RectTransform AddInputFieldNumber(this UIPanelBuilder builder, float value, Action<float> onApply)
-    {
-        return builder.AddInputFieldValidated(value.ToString(CultureInfo.InvariantCulture), o => onApply(float.Parse(o, CultureInfo.InvariantCulture)), @"\d+(\.\d+)?")!;
-    }
 }

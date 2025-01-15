@@ -1,7 +1,12 @@
-﻿using JetBrains.Annotations;
+﻿// ReSharper disable All
 
-// ReSharper disable once CheckNamespace
+using System.ComponentModel;
+
 namespace System.Runtime.CompilerServices;
 
-[PublicAPI]
-public sealed class IsExternalInit;
+/// <summary>
+/// Reserved to be used by the compiler for tracking metadata.
+/// This class should not be used by developers in source code.
+/// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
+internal static class IsExternalInit;

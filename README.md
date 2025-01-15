@@ -1,6 +1,6 @@
 # Railroader Mod: Map Editor
 
-## Alpha version of Editor, ~~if~~ when shomethings goes wrong, please tell me ...
+## Alpha version of Editor
 
 ### Requirements:
 

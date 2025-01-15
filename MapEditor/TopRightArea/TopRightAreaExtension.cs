@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using Serilog;
+using UI.Tooltips;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -11,32 +12,27 @@ namespace MapEditor.TopRightArea;
 
 public static class TopRightAreaExtension
 {
-    public static void AddButton(UnityAction onClick) {
+    public static void AddButton(string iconName, string tooltip, int index, UnityAction onClick) {
         var topRightArea = Object.FindObjectOfType<global::UI.TopRightArea>();
         if (topRightArea == null) {
             return;
         }
 
-        var strip = topRightArea.transform.Find("Strip");
-        if (strip == null) {
-            return;
-        }
+        var componentInChildren = topRightArea.transform.Find("Strip")!.gameObject.GetComponentInChildren<Button>()!;
+        var gameObject          = Object.Instantiate(componentInChildren.gameObject, componentInChildren.transform.parent)!;
+        gameObject.transform.SetSiblingIndex(index);
 
-        var gameObject = new GameObject("MapEditorButton") {
-            transform = { parent = strip }
-        };
-        gameObject.transform.SetSiblingIndex(9);
+        gameObject.GetComponent<UITooltipProvider>()!.TooltipInfo = new TooltipInfo(tooltip, string.Empty);
 
-        var button = gameObject.AddComponent<Button>();
+        var button = gameObject.GetComponent<Button>()!;
+        button.onClick = new Button.ButtonClickedEvent();
         button.onClick.AddListener(onClick);
 
-        var image = gameObject.AddComponent<Image>();
-        image.sprite = Sprite.Create(_ConstructionIcon, new Rect(0, 0, 24, 24), new Vector2(0.5f, 0.5f))!;
-        image.rectTransform!.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 32);
-        image.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 32);
-    }
+        var image = gameObject.GetComponent<Image>()!;
 
-    private static readonly Texture2D _ConstructionIcon = LoadTexture2D("construction-icon.png", 24, 24);
+        var icon = LoadTexture2D(iconName, 128, 128);
+        image.sprite = Sprite.Create(icon, new Rect(0.0f, 0.0f, 128, 128), new Vector2(0.5f, 0.5f))!;
+    }
 
     private static byte[] GetBytes(string path) {
         var       assembly = Assembly.GetExecutingAssembly();
@@ -48,8 +44,8 @@ public static class TopRightAreaExtension
 
     private static Texture2D LoadTexture2D(string path, int width, int height) {
         try {
-            var bytes   = GetBytes($"MapEditor.TopRightArea.{path}");
-            var texture = new Texture2D(width, height);
+            var bytes   = GetBytes($"{typeof(TopRightAreaExtension).Namespace}.{path}");
+            var texture = new Texture2D(width, height, TextureFormat.DXT5, false);
             texture.LoadImage(bytes);
             return texture;
         } catch (Exception e) {

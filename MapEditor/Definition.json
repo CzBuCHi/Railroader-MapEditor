@@ -6,11 +6,11 @@
     "requires": [
         {
             "id": "railloader",
-            "notBefore": "1.8.0"
+            "notBefore": "1.9.6.8"
         },
         {
             "id": "Zamu.StrangeCustoms",
-            "notBefore": "1.7.24194.2259"
+            "notBefore": "1.9.24308.1443"
         }
     ],
     "assemblies": [
