@@ -14,12 +14,13 @@ namespace MapEditor.UI;
 [PublicAPI]
 public sealed class MilestonesWindow : MonoBehaviour, IProgrammaticWindow
 {
-    public UIBuilderAssets BuilderAssets    { get; set; } = null!;
-    public string          WindowIdentifier { get; }      = "MilestonesWindow";
-    public Vector2Int      DefaultSize      { get; }      = new(800, 600);
-    public Window.Position DefaultPosition  { get; }      = Window.Position.Center;
+    public        UIBuilderAssets  BuilderAssets    { get; set; } = null!;
+    public        string           WindowIdentifier { get; }      = "MilestonesWindow";
+    public        Vector2Int       DefaultSize      { get; }      = new(800, 600);
+    public        Window.Position  DefaultPosition  { get; }      = Window.Position.Center;
+    public        Window.Sizing    Sizing           { get; }      = Window.Sizing.Fixed(new(800, 600));
 
-    public static MilestonesWindow Shared => WindowManager.Shared!.GetWindow<MilestonesWindow>()!;
+    public static MilestonesWindow Shared           => WindowManager.Shared!.GetWindow<MilestonesWindow>()!;
 
     private Window   _Window = null!;
     private UIPanel? _Panel;

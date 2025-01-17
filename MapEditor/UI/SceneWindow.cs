@@ -6,6 +6,7 @@ using GalaSoft.MvvmLight.Messaging;
 using Helpers;
 using JetBrains.Annotations;
 using MapEditor.Behaviours;
+using Serilog;
 using Track;
 using UI;
 using UI.Builder;
@@ -21,6 +22,7 @@ public sealed class SceneWindow : MonoBehaviour, IProgrammaticWindow
     public string          WindowIdentifier { get; }      = "SceneWindow";
     public Vector2Int      DefaultSize      { get; }      = new(1200, 600);
     public Window.Position DefaultPosition  { get; }      = Window.Position.LowerRight;
+    public Window.Sizing   Sizing           { get; }      = Window.Sizing.Resizable(new(1200, 600));
 
     public static SceneWindow Shared => WindowManager.Shared!.GetWindow<SceneWindow>()!;
 
@@ -29,7 +31,6 @@ public sealed class SceneWindow : MonoBehaviour, IProgrammaticWindow
 
     public void Awake() {
         _Window = GetComponent<Window>()!;
-        _Window.SetResizable(DefaultSize / 2, DefaultSize * 2);
     }
 
     public void Show() {
@@ -122,9 +123,7 @@ public sealed class SceneWindow : MonoBehaviour, IProgrammaticWindow
 
         if (!_Cache.TryGetValue(_SelectedRootIndex, out var listAll)) {
             var root = roots[_SelectedRootIndex - 1];
-
             listAll = GetAllDescendantsWithPath(root.transform, "", (int)_Levels).OrderBy(o => o.path).ToArray();
-
             _Cache.Add(_SelectedRootIndex, listAll);
         }
 
@@ -137,7 +136,7 @@ public sealed class SceneWindow : MonoBehaviour, IProgrammaticWindow
         }, "filter"));
 
         var data = listAll!
-                   .Where(o => o.transform.GetComponent<SceneryAssetInstance>() != null)
+                   //.Where(o => o.transform.GetComponent<SceneryAssetInstance>() != null)
                    .Where(o => _Filter == "" || o.path.IndexOf(_Filter, StringComparison.InvariantCultureIgnoreCase) != -1)
                    .ToList();
 
@@ -147,7 +146,7 @@ public sealed class SceneWindow : MonoBehaviour, IProgrammaticWindow
             builder.Rebuild();
         }));
 
-        if (_SelectedPathIndex > 0) {
+        if (_SelectedPathIndex > 0 && data.Count > _SelectedPathIndex) {
             BuildDetail(builder, data[_SelectedPathIndex - 1].transform);
         }
 
@@ -155,6 +154,9 @@ public sealed class SceneWindow : MonoBehaviour, IProgrammaticWindow
     }
 
     private int _SelectedComponentIndex;
+
+    private bool   _AutoRebuild;
+    private Timer? _AutoRebuildTimer;
 
     private void BuildDetail(UIPanelBuilder builder, GameObject? go) {
         if (go == null) {
@@ -164,11 +166,23 @@ public sealed class SceneWindow : MonoBehaviour, IProgrammaticWindow
 
         builder.RebuildOnEvent<RebuildSceneViewDialog>();
 
-        if (_OnSelected != null) {
-            builder.ButtonStrip(strip => { 
-                strip.AddButton("Clone this", () => _OnSelected(go)); 
+        builder.ButtonStrip(strip => { 
+            strip.AddButton("Rebuild", () => builder.Rebuild());
+            strip.AddButtonSelectable("Auto rebuild", _AutoRebuild, () => {
+                _AutoRebuild = !_AutoRebuild;
+                if (_AutoRebuild) {
+                    _AutoRebuildTimer = go.AddComponent<Timer>();
+                    _AutoRebuildTimer.Configure(new Action(builder.Rebuild), 1);
+                } else {
+                    if (_AutoRebuildTimer != null) {
+                        Destroy(_AutoRebuildTimer);
+                    }
+                }
             });
-        }
+            if (_OnSelected != null) {
+                strip.AddButton("Clone this", () => _OnSelected(go)); 
+            }
+        });
 
         builder.AddField("activeSelf", () => $"{go.activeSelf}", UIPanelBuilder.Frequency.Periodic);
         builder.AddField("activeInHierarchy", () => $"{go.activeInHierarchy}", UIPanelBuilder.Frequency.Periodic);
@@ -200,11 +214,9 @@ public sealed class SceneWindow : MonoBehaviour, IProgrammaticWindow
     }
 
     private static IEnumerable<(GameObject transform, string path)> GetAllDescendantsWithPath(Transform parent, string parentPath, int level) {
-        foreach (Transform child in parent) {
-            if (!Filter(child)) {
-                continue;
-            }
+        Log.Information("Children of '" + parentPath + "/" + parent.name + "': " + string.Join(", ", parent.Cast<Transform>().Select(o => o.name)));
 
+        foreach (Transform child in parent) {
             var childPath = $"{parentPath}/{child.name}";
             yield return (child.gameObject, childPath);
 
@@ -216,10 +228,6 @@ public sealed class SceneWindow : MonoBehaviour, IProgrammaticWindow
                 yield return descendant;
             }
         }
-
-        yield break;
-
-        bool Filter(Transform o) => o.name != "Track" && !o.name!.StartsWith("Cube.");
     }
 
     private static Action Show(GameObject gameObject) => () => CameraSelector.shared.ZoomToPoint(gameObject.transform.position.WorldToGame());

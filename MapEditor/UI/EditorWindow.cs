@@ -25,6 +25,7 @@ public sealed partial class EditorWindow : MonoBehaviour, IProgrammaticWindow
     public string          WindowIdentifier { get; }      = "EditorWindow";
     public Vector2Int      DefaultSize      { get; }      = new(400, 300);
     public Window.Position DefaultPosition  { get; }      = Window.Position.UpperLeft;
+    public Window.Sizing   Sizing           { get; }      = Window.Sizing.Resizable(new(200, 200));
 
     public static EditorWindow Shared => WindowManager.Shared!.GetWindow<EditorWindow>()!;
 
@@ -33,7 +34,6 @@ public sealed partial class EditorWindow : MonoBehaviour, IProgrammaticWindow
 
     public void Awake() {
         _Window = GetComponent<Window>()!;
-        _Window.SetResizable(DefaultSize / 2, DefaultSize * 2);
     }
 
     public void Show() {

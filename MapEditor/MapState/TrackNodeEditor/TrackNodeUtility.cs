@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Helpers;
 using MapEditor.Extensions;
 using MapEditor.MapState.TrackSegmentEditor;
@@ -179,8 +180,9 @@ public static class TrackNodeUtility
             var nid = IdGenerators.TrackNodes.Next();
 
             var par   = Math.Min(trackSegment.GetLength(), 5);
-            var p     = trackSegment.GetParameter(par, node);
-            var point = trackSegment.Curve.GetPoint(p).GameToWorld();
+            trackSegment.GetPositionRotationAtDistance(par, endIsA ? TrackSegment.End.A : TrackSegment.End.B, out var position, out _);
+            
+            var point = position.GameToWorld();
 
             var forward = node.transform.forward * (isSwitch ? 2 : 5);
             if (Vector3.Angle(node.transform.forward, point - node.transform.position) > Math.PI) {
